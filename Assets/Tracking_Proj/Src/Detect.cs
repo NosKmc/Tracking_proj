@@ -6,6 +6,7 @@ using OpenCvSharp.Demo;
 
 public class Detect : WebCamera
 {
+    // DemoのFaceDetecorScene参考
     public TextAsset faces;
     public TextAsset eyes;
     public TextAsset shapes;
@@ -30,12 +31,6 @@ public class Detect : WebCamera
         processor.Performance.SkipRate = 0;             // we actually process only each Nth frame (and every frame for skipRate = 0)
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     protected override bool ProcessTexture(WebCamTexture input, ref Texture2D output)
     {
         // detect everything we're interested in
@@ -45,7 +40,7 @@ public class Detect : WebCamera
         processor.MarkDetected();
 
         // processor.Image now holds data we'd like to visualize
-        output = Unity.MatToTexture(processor.Image, output);   // if output is valid texture it's buffer will be re-used, otherwise it will be re-created
+        output = OpenCvSharp.Unity.MatToTexture(processor.Image, output);   // if output is valid texture it's buffer will be re-used, otherwise it will be re-created
 
         return true;
     }
