@@ -35,7 +35,6 @@ public class FaceParam
         if (horizontal == 0) return;
         int vertical = Point.DistancePow2(mouthPoints[2], mouthPoints[6]);
         this.MouthRatio = (float)vertical / (float)horizontal;
-        Debug.Log(MouthRatio);
     }
 
     public void CalcParams(Point[] points)

@@ -10,6 +10,7 @@ public class Detect : WebCamera
     public TextAsset faces;
     public TextAsset eyes;
     public TextAsset shapes;
+    public GameObject live2D;
 
     private ProcessorLive<WebCamTexture> processor;
 
@@ -33,6 +34,8 @@ public class Detect : WebCamera
         processor.Performance.SkipRate = 0;             // we actually process only each Nth frame (and every frame for skipRate = 0)
 
         faceParam = new FaceParam();
+        Live2DManager com = live2D.GetComponent<Live2DManager>();
+        com.SetFaceParam(faceParam);
     }
 
     protected override bool ProcessTexture(WebCamTexture input, ref Texture2D output)
@@ -47,8 +50,6 @@ public class Detect : WebCamera
         output = OpenCvSharp.Unity.MatToTexture(processor.Image, output);   // if output is valid texture it's buffer will be re-used, otherwise it will be re-created
 
         faceParam.CalcParams(processor.FacePoints);
-        //Debug.Log(faceParam.RightEyeRatio);
-        //Debug.Log(faceParam.MouthRatio);
 
         return true;
     }
