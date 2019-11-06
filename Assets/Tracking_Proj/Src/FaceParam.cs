@@ -19,22 +19,28 @@ public class FaceParam
         Point[] eyePoints = new Point[6];
         //右目は37番から
         Array.Copy(points, 36, eyePoints, 0, 6);
-        this.RightEyeRatio = Point.DistancePow2(eyePoints[1], eyePoints[5]) 
-                                    / Point.DistancePow2(eyePoints[0], eyePoints[3]);
+        int horizontal = Point.DistancePow2(eyePoints[0], eyePoints[3]);
+        if (horizontal == 0) return;
+        int vertical = Point.DistancePow2(eyePoints[1], eyePoints[5]);
+        this.RightEyeRatio = (float)vertical / (float)horizontal;
     }
 
     public void CalcMouthRatio(Point[] _points)
     {
         Point[] points = _points;
-        Point[] mouthPoints = new Point[6];
+        Point[] mouthPoints = new Point[8];
         //口の内側は61番から
         Array.Copy(points, 60, mouthPoints, 0, 8);
-        this.MouthRatio = Point.DistancePow2(mouthPoints[2], mouthPoints[6]) 
-                                    / Point.DistancePow2(mouthPoints[0], mouthPoints[4]);
+        int horizontal = Point.DistancePow2(mouthPoints[0], mouthPoints[4]);
+        if (horizontal == 0) return;
+        int vertical = Point.DistancePow2(mouthPoints[2], mouthPoints[6]);
+        this.MouthRatio = (float)vertical / (float)horizontal;
+        Debug.Log(MouthRatio);
     }
 
-    public void CalcParams()
+    public void CalcParams(Point[] points)
     {
-
+        CalcEyeRatio(points);
+        CalcMouthRatio(points);
     }
 }
