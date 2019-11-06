@@ -11,14 +11,16 @@ public class Detect : WebCamera
     public TextAsset eyes;
     public TextAsset shapes;
 
-    private FaceProcessorLive<WebCamTexture> processor;
+    private ProcessorLive<WebCamTexture> processor;
+
+    public FaceParam faceParam;
 
     protected override void Awake()
     {
         base.Awake();
         base.forceFrontalCamera = true; // we work with frontal cams here, let's force it for macOS s MacBook doesn't state frontal cam correctly
 
-        processor = new FaceProcessorLive<WebCamTexture>();
+        processor = new ProcessorLive<WebCamTexture>();
         processor.Initialize(faces.text, eyes.text, shapes.bytes);
 
         // data stabilizer - affects face rects, face landmarks etc.
@@ -29,6 +31,8 @@ public class Detect : WebCamera
         // performance data - some tricks to make it work faster
         processor.Performance.Downscale = 256;          // processed image is pre-scaled down to N px by long side
         processor.Performance.SkipRate = 0;             // we actually process only each Nth frame (and every frame for skipRate = 0)
+
+        faceParam = new FaceParam();
     }
 
     protected override bool ProcessTexture(WebCamTexture input, ref Texture2D output)
@@ -41,6 +45,9 @@ public class Detect : WebCamera
 
         // processor.Image now holds data we'd like to visualize
         output = OpenCvSharp.Unity.MatToTexture(processor.Image, output);   // if output is valid texture it's buffer will be re-used, otherwise it will be re-created
+
+        faceParam.CalcEyeRatio(processor.FacePoints);
+        Debug.Log(faceParam.RightEyeRatio);
 
         return true;
     }
