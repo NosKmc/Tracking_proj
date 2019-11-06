@@ -29,8 +29,10 @@ public class Live2DManager : MonoBehaviour
         var value = Mathf.Sin(_t) * 30f;
         var parameter = _model.Parameters[2];
         parameter.Value = value;*/
-        var parameter = _model.Parameters[18];
-        //Debug.Log(faceParam.MouthRatio);
-        parameter.Value = faceParam.MouthRatio * 2;
+        var mouthParameter = _model.Parameters[18];
+        mouthParameter.Value = faceParam.MouthRatio * 2;
+        var eyeParameter = _model.Parameters[5];
+        eyeParameter.Value = faceParam.RightEyeRatio * 6 - 0.03f;
+        Debug.Log(faceParam.RightEyeRatio);
     }
 }
