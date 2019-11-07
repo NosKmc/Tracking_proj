@@ -31,8 +31,9 @@ public class Live2DManager : MonoBehaviour
         parameter.Value = value;*/
         var mouthParameter = _model.Parameters[18];
         mouthParameter.Value = faceParam.MouthRatio * 2;
-        var eyeParameter = _model.Parameters[5];
-        eyeParameter.Value = faceParam.RightEyeRatio * 6 - 0.03f;
-        Debug.Log(faceParam.RightEyeRatio);
+        var reyeParameter = _model.Parameters[5];
+        reyeParameter.Value = faceParam.RightEyeRatio * 6 - 0.02f;
+        var leyeParameter = _model.Parameters[3];
+        leyeParameter.Value = faceParam.LeftEyeRatio * 6 - 0.02f;
     }
 }

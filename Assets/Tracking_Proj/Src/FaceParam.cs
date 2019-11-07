@@ -7,6 +7,7 @@ using System;
 public class FaceParam
 {
     public float RightEyeRatio { get; private set; }
+    public float LeftEyeRatio { get; private set; }
     public float MouthRatio { get; private set; }
 
     public FaceParam()
@@ -16,13 +17,21 @@ public class FaceParam
     public void CalcEyeRatio(Point[] _points)
     {
         Point[] points = _points;
-        Point[] eyePoints = new Point[6];
+        Point[] reyePoints = new Point[6];
+        Point[] leyePoints = new Point[6];
+
         //右目は37番から
-        Array.Copy(points, 36, eyePoints, 0, 6);
-        int horizontal = Point.DistancePow2(eyePoints[0], eyePoints[3]);
+        Array.Copy(points, 36, reyePoints, 0, 6);
+        int horizontal = Point.DistancePow2(reyePoints[0], reyePoints[3]);
         if (horizontal == 0) return;
-        int vertical = Point.DistancePow2(eyePoints[1], eyePoints[5]);
+        int vertical = Point.DistancePow2(reyePoints[1], reyePoints[5]);
         this.RightEyeRatio = (float)vertical / (float)horizontal;
+        //左目は43番から
+        Array.Copy(points, 42, leyePoints, 0, 6);
+        horizontal = Point.DistancePow2(leyePoints[0], leyePoints[3]);
+        if (horizontal == 0) return;
+        vertical = Point.DistancePow2(leyePoints[1], leyePoints[5]);
+        this.LeftEyeRatio = (float)vertical / (float)horizontal;
     }
 
     public void CalcMouthRatio(Point[] _points)
