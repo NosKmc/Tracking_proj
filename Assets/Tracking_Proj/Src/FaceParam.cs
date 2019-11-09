@@ -49,8 +49,8 @@ public class FaceParam
 
     public void CalcHeadPose(Point[] points, int camWidth, int camHeight)
     {
-        List<Point3d> modelPoints;
-        modelPoints = new List<Point3d>()
+        MatOfPoint3d modelPoints;
+        modelPoints = new MatOfPoint3d()
         {
             new Point3d(0.0f, 0.0f, 0.0f),
             new Point3d(0.0f, -330.0f, -65.0f),
@@ -60,8 +60,8 @@ public class FaceParam
             new Point3d(150.0f, -150.0f, -125.0f)
         };
 
-        List<Point2d> marks;
-        marks = new List<Point2d>()
+        MatOfPoint2d marks;
+        marks = new MatOfPoint2d()
         {
             points[30], points[8], points[36],
             points[45], points[48], points[54]
@@ -70,16 +70,20 @@ public class FaceParam
         double focal_length = camWidth;
         double centerX = (double)camWidth / 2.0f;
         double centerY = (double)camHeight / 2.0f;
-        double[,] cameraMat;
-        cameraMat = new double[3, 3]
+        double[,] cameraarr;
+        cameraarr = new double[3, 3]
         {
             { focal_length, 0.0f, centerX },
             { 0.0f, focal_length, centerY },
             { 0, 0, 1 }
         };
+        MatOfDouble cameraMat = MatOfDouble.FromArray(cameraarr);
 
-        double[] distCoeffs = new double[4];
-        distCoeffs = Enumerable.Repeat(0.0d, 4).ToArray();
+        MatOfDouble distCoeffs = new MatOfDouble(new Size(1, 4), 0.0d);
+        MatOfDouble vecRot = new MatOfDouble();
+        MatOfDouble vecTr = new MatOfDouble();
+
+        Cv2.SolvePnP(modelPoints, marks, cameraMat, distCoeffs, vecRot, vecTr);
     }
 
     public void CalcParams(Point[] points)
