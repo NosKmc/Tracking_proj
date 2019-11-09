@@ -84,11 +84,19 @@ public class FaceParam
         MatOfDouble vecTr = new MatOfDouble();
 
         Cv2.SolvePnP(modelPoints, marks, cameraMat, distCoeffs, vecRot, vecTr);
+
+        MatOfDouble matRot = new MatOfDouble(new Size(3, 3));
+        Cv2.Rodrigues(vecRot, matRot);
+
+        UnityEngine.Debug.Log(vecRot.At<double>(0));
+        UnityEngine.Debug.Log(vecRot.At<double>(1));
+        UnityEngine.Debug.Log(vecRot.At<double>(2));
     }
 
     public void CalcParams(Point[] points)
     {
         CalcEyeRatio(points);
         CalcMouthRatio(points);
+        CalcHeadPose(points, 256, 192);
     }
 }
