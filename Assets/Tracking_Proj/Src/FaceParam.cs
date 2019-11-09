@@ -10,6 +10,9 @@ public class FaceParam
     public float RightEyeRatio { get; private set; }
     public float LeftEyeRatio { get; private set; }
     public float MouthRatio { get; private set; }
+    public float FaceYaw { get; private set; }
+    public float FacePitch { get; private set; }
+    public float FaceRoll { get; private set; }
 
     public FaceParam()
     {
@@ -87,10 +90,17 @@ public class FaceParam
 
         MatOfDouble matRot = new MatOfDouble(new Size(3, 3));
         Cv2.Rodrigues(vecRot, matRot);
-
-        UnityEngine.Debug.Log(vecRot.At<double>(0));
-        UnityEngine.Debug.Log(vecRot.At<double>(1));
-        UnityEngine.Debug.Log(vecRot.At<double>(2));
+        MatOfDouble matProj = new MatOfDouble(3, 4, 0.0f); // Sizeとコンストラクタはcolとrowが逆
+        matProj[0,3,0,3] = matRot;
+        Mat eulerAngles = new Mat();
+        Cv2.DecomposeProjectionMatrix(matProj, cameraMat, matRot, vecTr, eulerAngles:eulerAngles);
+        float yaw = (float)eulerAngles.At<double>(1);
+        float pitch = (float)eulerAngles.At<double>(0);
+        float roll = (float)eulerAngles.At<double>(2);
+        Debug.Log("yaw: "+yaw+"pitch: "+pitch+"roll: "+roll);
+        this.FaceYaw = yaw;
+        this.FacePitch = pitch;
+        this.FaceRoll = roll;
     }
 
     public void CalcParams(Point[] points)
