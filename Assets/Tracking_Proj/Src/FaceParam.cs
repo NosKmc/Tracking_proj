@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using OpenCvSharp;
 using System;
+using System.Linq;
 
 public class FaceParam
 {
@@ -44,6 +45,41 @@ public class FaceParam
         if (horizontal == 0) return;
         int vertical = Point.DistancePow2(mouthPoints[2], mouthPoints[6]);
         this.MouthRatio = (float)vertical / (float)horizontal;
+    }
+
+    public void CalcHeadPose(Point[] points, int camWidth, int camHeight)
+    {
+        List<Point3d> modelPoints;
+        modelPoints = new List<Point3d>()
+        {
+            new Point3d(0.0f, 0.0f, 0.0f),
+            new Point3d(0.0f, -330.0f, -65.0f),
+            new Point3d(-225.0f, 170.0f, -135.0f),
+            new Point3d(225.0f, 170.0f, -135.0f),
+            new Point3d(-150.0f, -150.0f, -125.0f),
+            new Point3d(150.0f, -150.0f, -125.0f)
+        };
+
+        List<Point2d> marks;
+        marks = new List<Point2d>()
+        {
+            points[30], points[8], points[36],
+            points[45], points[48], points[54]
+        };
+
+        double focal_length = camWidth;
+        double centerX = (double)camWidth / 2.0f;
+        double centerY = (double)camHeight / 2.0f;
+        double[,] cameraMat;
+        cameraMat = new double[3, 3]
+        {
+            { focal_length, 0.0f, centerX },
+            { 0.0f, focal_length, centerY },
+            { 0, 0, 1 }
+        };
+
+        double[] distCoeffs = new double[4];
+        distCoeffs = Enumerable.Repeat(0.0d, 4).ToArray();
     }
 
     public void CalcParams(Point[] points)
