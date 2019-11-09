@@ -38,8 +38,8 @@ public class Live2DManager : MonoBehaviour
         var faceYawParameter = _model.Parameters[0];
         var facePitchParameter = _model.Parameters[1];
         var faceRollParameter = _model.Parameters[2];
-        faceYawParameter.Value = faceParam.FaceYaw;
-        facePitchParameter.Value = faceParam.FacePitch;
-        faceRollParameter.Value = faceParam.FaceRoll;
+        faceYawParameter.Value = faceParam.FaceYaw * -4.0f;
+        facePitchParameter.Value = (faceParam.FacePitch - 180) * 15.0f;
+        faceRollParameter.Value = faceParam.FaceRoll * 4.0f;
     }
 }
