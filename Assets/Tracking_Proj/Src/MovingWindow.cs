@@ -8,7 +8,7 @@ public class MovingWindow
     public float Value { get; private set; }
     private Queue<float> window;
 
-    MovingWindow(int windowSize)
+    public MovingWindow(int windowSize)
     {
         window = new Queue<float>();
         Size = windowSize;

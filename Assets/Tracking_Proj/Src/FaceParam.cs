@@ -7,16 +7,30 @@ using System.Linq;
 
 public class FaceParam
 {
-    public float RightEyeRatio { get; private set; }
-    public float LeftEyeRatio { get; private set; }
-    public float MouthRatio { get; private set; }
-    public float FaceYaw { get; private set; }
-    public float FacePitch { get; private set; }
-    public float FaceRoll { get; private set; }
+    public float RightEyeRatio { get { return RightEyeWindow.Value; } }
+    public float LeftEyeRatio { get { return LeftEyeWindow.Value; } }
+    public float MouthRatio { get { return MouthWindow.Value; } }
+    public float FaceYaw { get { return FaceYawWindow.Value; } }
+    public float FacePitch { get { return FacePitchWindow.Value; } }
+    public float FaceRoll { get { return FaceRollWindow.Value; } }
+
+    private MovingWindow RightEyeWindow;
+    private MovingWindow LeftEyeWindow;
+    private MovingWindow MouthWindow;
+    private MovingWindow FaceYawWindow;
+    private MovingWindow FacePitchWindow;
+    private MovingWindow FaceRollWindow;
+
+    private const int WINDOW_SIZE = 6;
 
     public FaceParam()
     {
-
+        RightEyeWindow = new MovingWindow(WINDOW_SIZE);
+        LeftEyeWindow = new MovingWindow(WINDOW_SIZE);
+        MouthWindow = new MovingWindow(WINDOW_SIZE);
+        FaceYawWindow = new MovingWindow(WINDOW_SIZE);
+        FacePitchWindow = new MovingWindow(WINDOW_SIZE);
+        FaceRollWindow = new MovingWindow(WINDOW_SIZE);
     }
     public void CalcEyeRatio(Point[] _points)
     {
@@ -29,13 +43,13 @@ public class FaceParam
         int horizontal = Point.DistancePow2(reyePoints[0], reyePoints[3]);
         if (horizontal == 0) return;
         int vertical = Point.DistancePow2(reyePoints[1], reyePoints[5]);
-        this.RightEyeRatio = (float)vertical / (float)horizontal;
+        RightEyeWindow.CalcValue((float)vertical / (float)horizontal);
         //左目は43番から
         Array.Copy(points, 42, leyePoints, 0, 6);
         horizontal = Point.DistancePow2(leyePoints[0], leyePoints[3]);
         if (horizontal == 0) return;
         vertical = Point.DistancePow2(leyePoints[1], leyePoints[5]);
-        this.LeftEyeRatio = (float)vertical / (float)horizontal;
+        LeftEyeWindow.CalcValue((float)vertical / (float)horizontal);
     }
 
     public void CalcMouthRatio(Point[] _points)
@@ -47,7 +61,7 @@ public class FaceParam
         int horizontal = Point.DistancePow2(mouthPoints[0], mouthPoints[4]);
         if (horizontal == 0) return;
         int vertical = Point.DistancePow2(mouthPoints[2], mouthPoints[6]);
-        this.MouthRatio = (float)vertical / (float)horizontal;
+        MouthWindow.CalcValue((float)vertical / (float)horizontal);
     }
 
     public void CalcHeadPose(Point[] points, int camWidth, int camHeight)
@@ -98,9 +112,9 @@ public class FaceParam
         float pitch = (float)eulerAngles.At<double>(0);
         float roll = (float)eulerAngles.At<double>(2);
         Debug.Log("yaw: "+yaw+"pitch: "+pitch+"roll: "+roll);
-        this.FaceYaw = yaw;
-        this.FacePitch = pitch;
-        this.FaceRoll = roll;
+        FaceYawWindow.CalcValue(yaw);
+        FacePitchWindow.CalcValue(pitch);
+        FaceRollWindow.CalcValue(roll);
     }
 
     public void CalcParams(Point[] points)
