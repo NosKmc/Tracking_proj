@@ -13,6 +13,7 @@ public class FaceParam
     public float FaceYaw { get { return FaceYawWindow.Value; } }
     public float FacePitch { get { return FacePitchWindow.Value; } }
     public float FaceRoll { get { return FaceRollWindow.Value; } }
+    public float EyeBowRatio { get { return EyeBowWindow.Value} }
 
     private MovingWindow RightEyeWindow;
     private MovingWindow LeftEyeWindow;
@@ -20,6 +21,7 @@ public class FaceParam
     private MovingWindow FaceYawWindow;
     private MovingWindow FacePitchWindow;
     private MovingWindow FaceRollWindow;
+    private MovingWindow EyeBowWindow;
 
     private const int WINDOW_SIZE = 6;
 
@@ -31,6 +33,7 @@ public class FaceParam
         FaceYawWindow = new MovingWindow(WINDOW_SIZE);
         FacePitchWindow = new MovingWindow(WINDOW_SIZE);
         FaceRollWindow = new MovingWindow(WINDOW_SIZE);
+        EyeBowWindow = new MovingWindow(WINDOW_SIZE);
     }
     public void CalcEyeRatio(Point[] _points)
     {
@@ -62,6 +65,16 @@ public class FaceParam
         if (horizontal == 0) return;
         int vertical = Point.DistancePow2(mouthPoints[2], mouthPoints[6]);
         MouthWindow.CalcValue((float)vertical / (float)horizontal);
+    }
+
+    public void CalcEyeBowRatio(Point[] _points)
+    {
+        Point[] points = _points;
+        Point BowHigh = points[24]; // 左眉の最高点
+        Point NoseHigh = points[27]; // 鼻の最高点
+        Point NoseLow = points[30]; // 鼻の最低点
+        float ratio = (float)(BowHigh.Y - NoseHigh.Y) / (float)(NoseHigh.Y - NoseLow.Y);
+        EyeBowWindow.CalcValue(ratio);
     }
 
     public void CalcHeadPose(Point[] points, int camWidth, int camHeight)
@@ -122,5 +135,6 @@ public class FaceParam
         CalcEyeRatio(points);
         CalcMouthRatio(points);
         CalcHeadPose(points, 256, 192);
+        CalcEyeBowRatio(points);
     }
 }
