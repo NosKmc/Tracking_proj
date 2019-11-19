@@ -13,7 +13,7 @@ public class FaceParam
     public float FaceYaw { get { return FaceYawWindow.Value; } }
     public float FacePitch { get { return FacePitchWindow.Value; } }
     public float FaceRoll { get { return FaceRollWindow.Value; } }
-    public float EyeBowRatio { get { return EyeBowWindow.Value} }
+    public float EyeBowRatio { get { return EyeBowWindow.Value; } }
 
     private MovingWindow RightEyeWindow;
     private MovingWindow LeftEyeWindow;
