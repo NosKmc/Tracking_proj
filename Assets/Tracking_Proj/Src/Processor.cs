@@ -24,6 +24,7 @@ class Processor<T>
     public List<DetectedFace> Faces { get; private set; }
 
     public Point[] FacePoints { get; private set; }
+    private Rect latestFaceRect;
 
     public Processor()
     {
@@ -161,52 +162,74 @@ class Processor<T>
 
             // now per each detected face draw a marker and detect eyes inside the face rect
             int facesCount = 0;
-            for (int i = 0; i < rawFaces.Length; ++i)
+            if (rawFaces.Length != 0)
             {
-                Rect faceRect = rawFaces[i];
-                Rect faceRectScaled = faceRect * invF;
-                using (Mat grayFace = new Mat(gray, faceRect))
+                for (int i = 0; i < rawFaces.Length; ++i)
                 {
-                    // another trick: confirm the face with eye detector, will cut some false positives
-                    if (cutFalsePositivesWithEyesSearch && null != cascadeEyes)
+                    Rect faceRect = rawFaces[i];
+                    Rect faceRectScaled = faceRect * invF;
+                    using (Mat grayFace = new Mat(gray, faceRect))
                     {
-                        Rect[] eyes = cascadeEyes.DetectMultiScale(grayFace);
-                        if (eyes.Length == 0 || eyes.Length > 2)
-                            continue;
-                    }
-
-                    // get face object
-                    DetectedFace face = null;
-                    if (Faces.Count < i + 1)
-                    {
-                        face = new DetectedFace(DataStabilizer, faceRectScaled);
-                        Faces.Add(face);
-                    }
-                    else
-                    {
-                        face = Faces[i];
-                        face.SetRegion(faceRectScaled);
-                    }
-
-                    // shape
-                    facesCount++;
-                    if (null != shapeFaces)
-                    {
-                        Point[] marks = shapeFaces.DetectLandmarks(gray, faceRect);
-
-                        // we have 68-point predictor
-                        if (marks.Length == 68)
+                        // another trick: confirm the face with eye detector, will cut some false positives
+                        if (cutFalsePositivesWithEyesSearch && null != cascadeEyes)
                         {
-                            // transform landmarks to the original image space
-                            List<Point> converted = new List<Point>();
-                            foreach (Point pt in marks)
-                                converted.Add(pt * invF);
+                            Rect[] eyes = cascadeEyes.DetectMultiScale(grayFace);
+                            if (eyes.Length == 0 || eyes.Length > 2)
+                                continue;
+                        }
 
-                            FacePoints = converted.ToArray();
-                            // save and parse landmarks
-                            face.SetLandmarks(converted.ToArray());
+                        // get face object
+                        DetectedFace face = null;
+                        if (Faces.Count < i + 1)
+                        {
+                            face = new DetectedFace(DataStabilizer, faceRectScaled);
+                            Faces.Add(face);
+                        }
+                        else
+                        {
+                            face = Faces[i];
+                            face.SetRegion(faceRectScaled);
+                        }
+
+                        // shape
+                        facesCount++;
+                        if (null != shapeFaces)
+                        {
+                            Point[] marks = shapeFaces.DetectLandmarks(gray, faceRect);
+
+                            // we have 68-point predictor
+                            if (marks.Length == 68)
+                            {
+                                // transform landmarks to the original image space
+                                List<Point> converted = new List<Point>();
+                                foreach (Point pt in marks)
+                                    converted.Add(pt * invF);
+
+                                FacePoints = converted.ToArray();
+                                latestFaceRect = faceRect;
+                                // save and parse landmarks
+                                face.SetLandmarks(converted.ToArray());
+                            }
                         }
                     }
+                }
+            }
+            else if (latestFaceRect != null)
+            {
+                Point[] marks = shapeFaces.DetectLandmarks(gray, latestFaceRect);
+
+                // we have 68-point predictor
+                if (marks.Length == 68)
+                {
+                    // transform landmarks to the original image space
+                    List<Point> converted = new List<Point>();
+                    foreach (Point pt in marks)
+                        converted.Add(pt * invF);
+
+                    FacePoints = converted.ToArray();
+                    UnityEngine.Debug.Log("顔非検知でのlandmark");
+                    // save and parse landmarks
+                    //face.SetLandmarks(converted.ToArray());
                 }
             }
 
