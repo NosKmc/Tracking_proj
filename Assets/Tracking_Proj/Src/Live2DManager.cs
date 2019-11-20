@@ -44,10 +44,13 @@ public class Live2DManager : MonoBehaviour
         var faceRollParameter = _model.Parameters[2];
 
         mouthParameter.Value = faceParam.MouthRatio * 2;
-        reyeParameter.Value = faceParam.RightEyeRatio * 6 - 0.02f;
-        leyeParameter.Value = faceParam.LeftEyeRatio * 6 - 0.02f;
-        faceYawParameter.Value = faceParam.FaceYaw * -4.0f;
+        float reye = faceParam.RightEyeRatio * 6 - 0.04f;
+        float leye = faceParam.LeftEyeRatio * 6 - 0.04f;
+        reyeParameter.Value = reye < 0.4 ? 0.0f : reye;
+        leyeParameter.Value = leye < 0.4 ? 0.0f : leye;
+        Debug.Log(reyeParameter.Value);
+        faceYawParameter.Value = faceParam.FaceYaw * -2.0f;
         facePitchParameter.Value = (faceParam.FacePitch - 180.0f) * 13.0f;
-        faceRollParameter.Value = faceParam.FaceRoll * 3.0f;
+        faceRollParameter.Value = faceParam.FaceRoll * 1.2f;
     }
 }
