@@ -25,6 +25,8 @@ class Processor<T>
 
     public Point[] FacePoints { get; private set; }
     private Rect latestFaceRect;
+    private int nonDetectTime;
+    public bool Sleep;
 
     public Processor()
     {
@@ -32,6 +34,8 @@ class Processor<T>
         DataStabilizer = new DataStabilizerParams();
         Performance = new FaceProcessorPerformanceParams();
         FacePoints = new Point[68];
+        nonDetectTime = 0;
+        Sleep = true;
     }
 
     public virtual void Initialize(string facesCascadeData, string eyesCascadeData, byte[] shapeData = null)
@@ -164,6 +168,8 @@ class Processor<T>
             int facesCount = 0;
             if (rawFaces.Length != 0)
             {
+                nonDetectTime = 0;
+                Sleep = false;
                 for (int i = 0; i < rawFaces.Length; ++i)
                 {
                     Rect faceRect = rawFaces[i];
@@ -216,20 +222,30 @@ class Processor<T>
             }
             else if (latestFaceRect != null)
             {
-                Point[] marks = shapeFaces.DetectLandmarks(gray, latestFaceRect);
-
-                // we have 68-point predictor
-                if (marks.Length == 68)
+                nonDetectTime++;
+                if (nonDetectTime > 40)
                 {
-                    // transform landmarks to the original image space
-                    List<Point> converted = new List<Point>();
-                    foreach (Point pt in marks)
-                        converted.Add(pt * invF);
+                    Sleep = true;
+                    UnityEngine.Debug.Log("おねむ");
+                    return;
+                }
+                else
+                {
+                    Point[] marks = shapeFaces.DetectLandmarks(gray, latestFaceRect);
 
-                    FacePoints = converted.ToArray();
-                    UnityEngine.Debug.Log("顔非検知でのlandmark");
-                    // save and parse landmarks
-                    //face.SetLandmarks(converted.ToArray());
+                    // we have 68-point predictor
+                    if (marks.Length == 68)
+                    {
+                        // transform landmarks to the original image space
+                        List<Point> converted = new List<Point>();
+                        foreach (Point pt in marks)
+                            converted.Add(pt * invF);
+
+                        FacePoints = converted.ToArray();
+                        UnityEngine.Debug.Log("顔非検知でのlandmark");
+                        // save and parse landmarks
+                        //face.SetLandmarks(converted.ToArray());
+                    }
                 }
             }
 

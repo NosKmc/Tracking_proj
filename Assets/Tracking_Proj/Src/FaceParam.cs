@@ -22,6 +22,7 @@ public class FaceParam
     private MovingWindow FaceRollWindow;
 
     private const int WINDOW_SIZE = 6;
+    public bool Sleep { get; set; } = true;
 
     public FaceParam()
     {

@@ -48,7 +48,8 @@ public class Detect : WebCamera
 
         // processor.Image now holds data we'd like to visualize
         output = OpenCvSharp.Unity.MatToTexture(processor.Image, output);   // if output is valid texture it's buffer will be re-used, otherwise it will be re-created
-
+        
+        faceParam.Sleep = processor.Sleep;
         faceParam.CalcParams(processor.FacePoints);
 
         return true;
