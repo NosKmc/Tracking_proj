@@ -24,11 +24,11 @@ public class Live2DManager : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        _t += (Time.deltaTime * 1.5f);
+        var value = Mathf.Sin(_t) * 1.0f;
+        var breath = _model.Parameters[18];
+        breath.Value = value;
         /*
-        _t += (Time.deltaTime * 4f);
-        var value = Mathf.Sin(_t) * 30f;
-        var parameter = _model.Parameters[2];
-        parameter.Value = value;
         var mouthParameter = _model.Parameters[18];
         var reyeParameter = _model.Parameters[5];
         var leyeParameter = _model.Parameters[3];
