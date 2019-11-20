@@ -111,7 +111,7 @@ public class FaceParam
         float yaw = (float)eulerAngles.At<double>(1);
         float pitch = (float)eulerAngles.At<double>(0);
         float roll = (float)eulerAngles.At<double>(2);
-        Debug.Log("yaw: "+yaw+"pitch: "+pitch+"roll: "+roll);
+        //Debug.Log("yaw: "+yaw+"pitch: "+pitch+"roll: "+roll);
         FaceYawWindow.CalcValue(yaw);
         FacePitchWindow.CalcValue(pitch);
         FaceRollWindow.CalcValue(roll);
